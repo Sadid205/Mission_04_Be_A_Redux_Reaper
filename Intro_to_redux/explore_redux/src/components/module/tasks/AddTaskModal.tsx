@@ -16,9 +16,10 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 
-const onSubmit = (data) => {
+const onSubmit = (data: any) => {
   console.log(data);
 };
 
@@ -41,9 +42,21 @@ export function AddTaskModal() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel />
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} value={field.value || ""} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} value={field.value || ""} />
                     </FormControl>
                   </FormItem>
                 )}
