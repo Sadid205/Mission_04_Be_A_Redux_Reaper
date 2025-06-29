@@ -27,26 +27,38 @@ import {
 import { Select, SelectContent, SelectItem } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { addTask } from "@/redux/features/task/taskSlice";
-import { selectUsers } from "@/redux/features/user/userSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hook";
-import type { ITask } from "@/types";
+import { useCreateTaskMutation } from "@/redux/api/baseApi";
+// import { addTask } from "@/redux/features/task/taskSlice";
+// import { selectUsers } from "@/redux/features/user/userSlice";
+// import { useAppDispatch, useAppSelector } from "@/redux/hook";
+// import type { ITask } from "@/types";
 import { SelectTrigger, SelectValue } from "@radix-ui/react-select";
 import { formatDate } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
-import { Link } from "react-router";
 
 export function AddTaskModal() {
-  const users = useAppSelector(selectUsers);
+  const [open, setOpen] = useState(false);
+  // const users = useAppSelector(selectUsers);
   const form = useForm();
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    dispatch(addTask(data as ITask));
+  const [createTask, { data, isLoading, isError }] = useCreateTaskMutation();
+  console.log("Data", data);
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    // dispatch(addTask(data as ITask));
+    setOpen(false);
+    // form.reset();
+    const taskData = {
+      ...data,
+      isCompleted: false,
+    };
+    const res = await createTask(taskData).unwrap();
+    console.log("Inside submit function", res);
   };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <form>
         <DialogTrigger asChild>
           <Button>Add Task</Button>
@@ -70,7 +82,7 @@ export function AddTaskModal() {
                 )}
               />
               <FormField
-                control={form.control}
+                // control={form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
@@ -120,11 +132,11 @@ export function AddTaskModal() {
                           <SelectValue placeholder="Select a priority to set" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      {/* <SelectContent>
                         {users.map((user) => (
                           <SelectItem value={user.id}>{user.name}</SelectItem>
                         ))}
-                      </SelectContent>
+                      </SelectContent> */}
                     </Select>
                   </FormItem>
                 )}
